@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>王承安 - 參選里長</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:微軟正黑體,sans-serif;}
+        body{background:#fff8ee;padding:10px;font-size:17px;}
+        .header{background:#f7a04e;color:#fff;text-align:center;padding:22px;border-radius:12px;}
+        .name{font-size:30px;font-weight:bold;}
+        .slogan{font-size:18px;margin-top:5px;}
+        .box{background:#fff;padding:20px;margin:15px 0;border-radius:10px;}
+        .title{font-size:22px;color:#e67e22;font-weight:bold;margin-bottom:10px;border-left:5px solid #f7a04e;padding-left:10px;}
+        .content{font-size:17px;line-height:1.7;}
+        input,textarea{width:100%;padding:10px;margin:6px 0;border:1px solid #ddd;border-radius:6px;font-size:16px;}
+        button{background:#f7a04e;color:#fff;border:none;padding:10px 18px;border-radius:6px;font-size:17px;margin-top:5px;cursor:pointer;width:100%;}
+        .comment-item{background:#f9f9f9;padding:12px;margin:10px 0;border-radius:8px;}
+    </style>
+</head>
+<body>
+<div class="header">
+    <div class="name">王承安</div>
+    <div class="slogan">用心服務 當選里長</div>
+</div>
+
+<div class="box">
+    <div class="title">核心政見</div>
+    <div class="content">
+        世界共享<br>
+        秉持互助共融理念，團結鄰里，共享資源，打造溫馨和睦、便利宜居的優質生活環境，傾心為鄉親服務。
+    </div>
+</div>
+
+<div class="box">
+    <div class="title">服務理念</div>
+    <div class="content">
+        腳踏實地做事，真心誠意待人，傾聽里民心聲，細心處理地方大小事，守護鄉親日常安穩生活。
+    </div>
+</div>
+
+<div class="box">
+    <div class="title">鄉親留言互動區</div>
+    <input id="nick" placeholder="請輸入暱稱">
+    <textarea id="msgText" rows="4" placeholder="請輸入留言內容"></textarea>
+    <button id="sendBtn">送出留言</button>
+    <div style="margin-top:15px;color:#666;font-size:15px;">全體鄉親留言區</div>
+    <div id="commentList"></div>
+</div>
+
+<script>
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQCwwh6XSgz9V5P0jyYxDYtJsqQId8-GqvVozL5gtOaBvmCUgQu357iE7BTuo2a19blX8R3-SoGP_dn/pub?output=csv";
+const FORM_URL = "";
+
+function loadComment(){
+    fetch(CSV_URL)
+    .then(res=>res.text())
+    .then(data=>{
+        let lines = data.split("\n");
+        let html = "";
+        for(let i=lines.length-1;i>=1;i--){
+            let arr = lines[i].split(",");
+            let name = arr[1]||"";
+            let content = arr[2]||"";
+            if(name && content){
+                html += `<div class="comment-item"><strong>${name}</strong><br>${content}</div>`;
+            }
+        }
+        document.getElementById("commentList").innerHTML = html;
+    })
+}
+
+document.getElementById("sendBtn").addEventListener("click",function(){
+    let n = document.getElementById("nick").value.trim();
+    let m = document.getElementById("msgText").value.trim();
+    if(!n||!m){
+        alert("請填寫暱稱與留言");
+        return;
+    }
+    if(FORM_URL !== ""){
+        window.open(FORM_URL,"_blank");
+    }
+    document.getElementById("nick").value = "";
+    document.getElementById("msgText").value = "";
+})
+
+window.onload = loadComment;
+setInterval(loadComment,20000);
+</script>
+</body>
+</html>
